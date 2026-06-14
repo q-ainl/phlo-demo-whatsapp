@@ -1,0 +1,18 @@
+# Compiled output
+php/
+www/*.css
+www/*.js
+
+# Secrets and credentials - NEVER commit these
+creds.ini
+data/creds.ini
+.env
+
+# phloWA / whatsapp-web.js session (contains the linked account)
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Runtime data (real numbers and message bodies)
+data/received.json
+data/errors.json
+data/uploads/

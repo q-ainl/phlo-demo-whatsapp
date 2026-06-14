@@ -1,0 +1,159 @@
+prop title = 'Phlo WhatsApp demo'
+prop themeColor = 'black'
+
+// Credentials live ONLY in data/creds.ini (gitignored) or the environment.
+// Nothing here ships a number or a secret. Without credentials the app is
+// inert: the send buttons explain how to configure it and the webhook rejects.
+prop credsWA => %creds->whatsapp ?? null
+prop endpoint => (string)($this->credsWA?->url ?? '')
+prop secret => (string)($this->credsWA?->secret ?? '')
+prop configured => $this->endpoint !== '' && $this->secret !== ''
+prop wa => $this->configured ? %WhatsApp($this->endpoint, $this->secret) : null
+
+route GET => view($this, $this->title)
+
+# --- Sending: one route per WhatsApp resource method ------------------------
+
+route both POST send text {
+	if (!$wa = $this->wa) return $this->guard
+	$to = $this->contact(%req->to)
+	return $this->result($this->attempt(fn() => $wa->text($to, (string)%req->text)), 'Text sent to '.$to)
+}
+
+route both POST send image {
+	if (!$wa = $this->wa) return $this->guard
+	if (!$file = %req->image ?? null) return apply(toast: 'Choose an image first.')
+	$to = $this->contact(%req->to)
+	return $this->result($this->attempt(fn() => $wa->image($to, $file, (string)%req->caption)), 'Image sent to '.$to)
+}
+
+route both POST send poll {
+	if (!$wa = $this->wa) return $this->guard
+	$to = $this->contact(%req->to)
+	$options = array_values(array_filter(array_map('trim', explode(lf, (string)%req->options)), 'strlen'))
+	return $this->result($this->attempt(fn() => $wa->poll($to, (string)%req->name, $options, (bool)(%req->multi ?? false))), 'Poll sent to '.$to)
+}
+
+route both POST send location {
+	if (!$wa = $this->wa) return $this->guard
+	$to = $this->contact(%req->to)
+	return $this->result($this->attempt(fn() => $wa->location($to, (float)%req->lat, (float)%req->lon, (string)%req->label)), 'Location sent to '.$to)
+}
+
+route async POST check {
+	if (!$wa = $this->wa) return apply(toast: 'Not configured. Add credentials to data/creds.ini.')
+	$res = $this->attempt(fn() => $wa->status())
+	return apply(toast: ($res->ok ?? false) ? ('Engine status: '.json_encode($res)) : ('Engine offline: '.($res->error ?? 'no response')))
+}
+
+# --- Receiving: the phloWA gateway POSTs inbound messages here --------------
+
+route both POST receive {
+	$given = (string)($_SERVER['HTTP_SECRET'] ?? '')
+	if ($this->secret === '' || !hash_equals($this->secret, $given)) return output(['error' => 'unauthorized'], code: 401)
+	$data = json_decode((string)file_get_contents('php://input'), true)
+	if (!is_array($data)) $data = ['from' => (string)%req->from, 'type' => (string)%req->type, 'body' => (string)%req->body]
+	type_message::create(sender: (string)($data['from'] ?? ''), kind: (string)($data['type'] ?? 'text'), body: (string)($data['body'] ?? ''), ts: time())
+	return output(['ok' => true])
+}
+
+if (app::route()) return
+return output(['error' => 'not found'], code: 404)
+
+# --- Helpers ----------------------------------------------------------------
+
+method contact($number){
+	$raw = trim((string)$number)
+	if (strpos($raw, '@')) return $raw
+	return preg_replace('/[^0-9]/', '', $raw).'@c.us'
+}
+
+method attempt($fn){
+	try {
+		return $fn()
+	}
+	catch (\Throwable $e){
+		return obj(ok: false, error: $e->getMessage())
+	}
+}
+
+method result($res, $okMsg){
+	if (%req->async) return apply(toast: ($res->ok ?? false) ? $okMsg : ('Failed: '.($res->error ?? 'unknown error')))
+	location(slash)
+}
+
+prop guard => %req->async ? apply(toast: 'WhatsApp is not configured. Add credentials to data/creds.ini.') : location(slash)
+
+view:
+<main#app.wa>
+	<header.head>
+		<h1>📱 Phlo WhatsApp</h1>
+		<p.lead>A standalone app that drives <a href="https://phlo.tech/whatsapp">phloWA</a> through the engine's <code>WhatsApp</code> resource: send text, images, polls and locations, and receive inbound messages on a secret-protected webhook.</p>
+		{{ $this->status }}
+	</header>
+	{{ $this->panels }}
+	{{ $this->feed }}
+	<p.foot>Phlo WhatsApp demo &middot; <a href="https://phlo.tech/whatsapp">read the phloWA guide</a></p>
+</main>
+
+view status:
+<section.card.status>
+<if $this->configured>
+	<p.ok>✅ Configured. Gateway at <code>$this->endpoint</code>.</p>
+	<form.async method=post action="/check"><button>Check engine status</button></form>
+<else>
+	<p.warn>⚠️ Not configured. This demo is inert until you add credentials.</p>
+	<p>Copy <code>data/creds.ini.example</code> to <code>data/creds.ini</code> and fill in your own phloWA gateway URL and secret. Nothing is committed.</p>
+</if>
+</section>
+
+view panels:
+<section.grid>
+	<form.async.card method=post action="/send/text">
+		<h2>Text</h2>
+		<input name=to placeholder="Recipient number, e.g. 31612345678">
+		<textarea name=text placeholder="Your message"></textarea>
+		<button>Send text</button>
+	</form>
+	<form.async.card method=post action="/send/image" enctype="multipart/form-data">
+		<h2>Image</h2>
+		<input name=to placeholder="Recipient number">
+		<input type=file name=image accept="image/*">
+		<input name=caption placeholder="Caption (optional)">
+		<button>Send image</button>
+	</form>
+	<form.async.card method=post action="/send/poll">
+		<h2>Poll</h2>
+		<input name=to placeholder="Recipient number">
+		<input name=name placeholder="Question">
+		<textarea name=options placeholder="One option per line"></textarea>
+		<label.check><input type=checkbox name=multi value=1> Allow multiple answers</label>
+		<button>Send poll</button>
+	</form>
+	<form.async.card method=post action="/send/location">
+		<h2>Location</h2>
+		<input name=to placeholder="Recipient number">
+		<input name=lat placeholder="Latitude">
+		<input name=lon placeholder="Longitude">
+		<input name=label placeholder="Label (optional)">
+		<button>Send location</button>
+	</form>
+</section>
+
+view feed:
+<section.card.feed>
+	<h2>Inbox <span.count>{{ count(type_message::records()) }}</span></h2>
+	<if type_message::records()>
+		<ul.messages>
+		<foreach array_slice(type_message::records(), 0, 30) AS $msg>
+			<li>
+				<span.from>$msg->sender</span>
+				<span.kind>$msg->kind</span>
+				<span.body>$msg->body</span>
+			</li>
+		</foreach>
+		</ul>
+	<else>
+		<p.empty>No messages yet. Point your phloWA gateway's webhook at <code>/receive</code> (with the shared secret) and inbound messages appear here.</p>
+	</if>
+</section>

@@ -1,0 +1,17 @@
+{
+    "resources": [
+        "WhatsApp",
+        "HTTP",
+        "security/creds",
+        "files/file",
+        "DB/DB",
+        "DB/model",
+        "DB/JSONDB",
+        "DB/JSON.result",
+        "payload",
+        "phlo.async",
+        "DOM/form",
+        "DOM/toasts"
+    ],
+    "release": "%app/release/"
+}

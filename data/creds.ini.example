@@ -1,0 +1,9 @@
+; Copy this file to data/creds.ini and fill in your own values.
+; data/creds.ini is gitignored and must never be committed.
+;
+; The same values can be supplied as environment variables instead:
+;   PHLO__whatsapp__url=...   PHLO__whatsapp__secret=...
+
+[whatsapp]
+url    = http://127.0.0.1:8081
+secret = replace-with-a-long-random-shared-secret

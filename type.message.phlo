@@ -1,0 +1,8 @@
+@ extends: model
+
+// Inbound messages are logged to a flat JSON file. Real numbers and message
+// bodies land here, so received.json is gitignored.
+static table = 'message'
+static DB => %JSONDB(data.'received.json')
+static order = 'ts DESC'
+static columns = 'id,sender,kind,body,ts'
