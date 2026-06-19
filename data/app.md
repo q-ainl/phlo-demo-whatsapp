@@ -1,8 +1,8 @@
 # data/app.json notes
 
-Minimal resource set for a phloWA front-end:
+Minimal resource set for a Phlo WhatsApp front-end:
 
-- `WhatsApp` + `HTTP` - the client that talks to the phloWA gateway.
+- `WhatsApp` + `HTTP` - the client that talks to the Phlo WhatsApp gateway.
 - `security/creds` - reads `data/creds.ini` and `PHLO__*` env vars into
   `%creds`. Sensitive values are wrapped so they never print by accident.
 - `files/file` - inbound uploads arrive in the payload as `file` objects, which

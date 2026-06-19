@@ -1,6 +1,6 @@
-# Phlo WhatsApp demo - phloWA in a single app
+# Phlo WhatsApp demo - in a single app
 
-A standalone app that drives **phloWA** through the engine's `WhatsApp`
+A standalone app that drives **Phlo WhatsApp** through the engine's `WhatsApp`
 resource. It sends text, images, polls and locations, and receives inbound
 messages on a secret-protected webhook.
 
@@ -19,14 +19,14 @@ rejects every request with `401`. You can deploy it publicly as-is.
   Every send is wrapped so a missing or offline gateway returns a clean toast
   instead of an error.
 - **Receiving** - `POST /receive` verifies the shared secret with
-  `hash_equals`, then logs the inbound message. Point your phloWA gateway's
+  `hash_equals`, then logs the inbound message. Point your Phlo WhatsApp gateway's
   webhook at this URL.
 - **Credential shielding** - `%creds->whatsapp->url` / `->secret` are read from
   `data/creds.ini` or `PHLO__whatsapp__url` / `PHLO__whatsapp__secret` env vars.
 
 ## Configure it (to send/receive for real)
 
-1. Run a phloWA gateway (whatsapp-web.js) somewhere you control, linked to your
+1. Run a Phlo WhatsApp gateway (whatsapp-web.js) somewhere you control, linked to your
    own number, exposing a secret-gated HTTP endpoint.
 2. Copy the credentials template and fill in your values:
    ```sh

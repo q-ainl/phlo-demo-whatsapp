@@ -46,7 +46,7 @@ route async POST check {
 	return apply(toast: ($res->ok ?? false) ? ('Engine status: '.json_encode($res)) : ('Engine offline: '.($res->error ?? 'no response')))
 }
 
-# --- Receiving: the phloWA gateway POSTs inbound messages here --------------
+# --- Receiving: the Phlo WhatsApp gateway POSTs inbound messages here --------------
 
 route both POST receive {
 	$given = (string)($_SERVER['HTTP_SECRET'] ?? '')
@@ -88,12 +88,12 @@ view:
 <main#app.wa>
 	<header.head>
 		<h1>📱 Phlo WhatsApp</h1>
-		<p.lead>A standalone app that drives <a href="https://phlo.tech/whatsapp">phloWA</a> through the engine's <code>WhatsApp</code> resource: send text, images, polls and locations, and receive inbound messages on a secret-protected webhook.</p>
+		<p.lead>A standalone app that drives <a href="https://phlo.tech/whatsapp">Phlo WhatsApp</a> through the engine's <code>WhatsApp</code> resource: send text, images, polls and locations, and receive inbound messages on a secret-protected webhook.</p>
 		{{ $this->status }}
 	</header>
 	{{ $this->panels }}
 	{{ $this->feed }}
-	<p.foot>Phlo WhatsApp demo &middot; <a href="https://phlo.tech/whatsapp">read the phloWA guide</a></p>
+	<p.foot>Phlo WhatsApp demo &middot; <a href="https://phlo.tech/whatsapp">read the Phlo WhatsApp guide</a></p>
 </main>
 
 view status:
@@ -103,7 +103,7 @@ view status:
 	<form.async method=post action="/check"><button>Check engine status</button></form>
 <else>
 	<p.warn>⚠️ Not configured. This demo is inert until you add credentials.</p>
-	<p>Copy <code>data/creds.ini.example</code> to <code>data/creds.ini</code> and fill in your own phloWA gateway URL and secret. Nothing is committed.</p>
+	<p>Copy <code>data/creds.ini.example</code> to <code>data/creds.ini</code> and fill in your own Phlo WhatsApp gateway URL and secret. Nothing is committed.</p>
 </if>
 </section>
 
@@ -154,6 +154,6 @@ view feed:
 		</foreach>
 		</ul>
 	<else>
-		<p.empty>No messages yet. Point your phloWA gateway's webhook at <code>/receive</code> (with the shared secret) and inbound messages appear here.</p>
+		<p.empty>No messages yet. Point your Phlo WhatsApp gateway's webhook at <code>/receive</code> (with the shared secret) and inbound messages appear here.</p>
 	</if>
 </section>
