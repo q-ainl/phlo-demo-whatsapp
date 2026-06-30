@@ -1,0 +1,11 @@
+# Run this demo with Docker; the image bundles the Phlo engine:
+#   docker compose up   ->   http://localhost:8080
+# The app serves here; receiving and sending WhatsApp messages additionally needs
+# the Phlo WhatsApp service and your own WhatsApp credentials (see the docs).
+services:
+  app:
+    image: ghcr.io/q-ainl/phlo
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/app
