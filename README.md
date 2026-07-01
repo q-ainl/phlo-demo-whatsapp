@@ -12,6 +12,22 @@ This repo contains **no phone numbers and no secrets**. Credentials live only in
 inert: the send buttons explain how to configure it, and the `/receive` webhook
 rejects every request with `401`. You can deploy it publicly as-is.
 
+## Run with Docker
+
+```sh
+git clone https://github.com/q-ainl/phlo-demo-whatsapp.git
+cd phlo-demo-whatsapp
+docker compose up
+# watch the `whatsapp` service logs for a QR code and scan it with WhatsApp
+# then open http://localhost:8080
+```
+
+`docker-compose.yml` runs the app plus the **phlo-whatsapp** bridge
+(whatsapp-web.js) as a sidecar. Set a shared `WA_SECRET` on both services, scan the
+QR to link a real account, and sending and receiving work end to end. Without a
+linked account the app still serves; the send buttons and the `/receive` webhook
+stay inert.
+
 ## What it shows
 
 - **Sending** - one route per `WhatsApp` resource method:
