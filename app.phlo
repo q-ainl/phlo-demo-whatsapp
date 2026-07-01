@@ -12,7 +12,7 @@ prop wa => $this->configured ? %WhatsApp($this->endpoint, $this->secret) : null
 
 route GET => view($this, $this->title)
 
-# --- Sending: one route per WhatsApp resource method ------------------------
+// --- Sending: one route per WhatsApp resource method ------------------------
 
 route both POST send text {
 	if (!$wa = $this->wa) return $this->guard
@@ -46,7 +46,7 @@ route async POST check {
 	return apply(toast: ($res->ok ?? false) ? ('Engine status: '.json_encode($res)) : ('Engine offline: '.($res->error ?? 'no response')))
 }
 
-# --- Receiving: the Phlo WhatsApp gateway POSTs inbound messages here --------------
+// --- Receiving: the Phlo WhatsApp gateway POSTs inbound messages here --------------
 
 route both POST receive {
 	$given = (string)($_SERVER['HTTP_SECRET'] ?? '')
@@ -60,7 +60,7 @@ route both POST receive {
 if (app::route()) return
 return output(['error' => 'not found'], code: 404)
 
-# --- Helpers ----------------------------------------------------------------
+// --- Helpers ----------------------------------------------------------------
 
 method contact($number){
 	$raw = trim((string)$number)
