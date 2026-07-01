@@ -1,11 +1,30 @@
-# Run this demo with Docker; the image bundles the Phlo engine:
-#   docker compose up   ->   http://localhost:8080
-# The app serves here; receiving and sending WhatsApp messages additionally needs
-# the Phlo WhatsApp service and your own WhatsApp credentials (see the docs).
+# One `docker compose up` runs the demo with the Phlo WhatsApp bridge:
+#   docker compose up
+#   # watch the `whatsapp` service logs for a QR code and scan it with WhatsApp
+#   # then open http://localhost:8080
+# Set WA_SECRET to a long random string; it must match on both services. The app
+# reaches the bridge at http://whatsapp:3000 and the bridge posts inbound messages
+# back to the app at /receive. Without a linked WhatsApp account the app still
+# serves, but sending and receiving stay inert.
 services:
   app:
     image: ghcr.io/q-ainl/phlo
     ports:
       - "8080:80"
+    environment:
+      PHLO__whatsapp__url: "http://whatsapp:3000"
+      PHLO__whatsapp__secret: "change-me-to-a-long-random-secret"
     volumes:
       - .:/app
+
+  whatsapp:
+    image: ghcr.io/q-ainl/phlo-whatsapp
+    environment:
+      WA_PORT: "3000"
+      WA_SECRET: "change-me-to-a-long-random-secret"
+      WA_WEBHOOK: "http://app:80/receive"
+    volumes:
+      - whatsapp-session:/opt/phlo/.wwebjs_auth
+
+volumes:
+  whatsapp-session:
