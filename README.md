@@ -19,7 +19,7 @@ git clone https://github.com/q-ainl/phlo-demo-whatsapp.git
 cd phlo-demo-whatsapp
 docker compose up
 # watch the `whatsapp` service logs for a QR code and scan it with WhatsApp
-# then open http://localhost:8080
+# then open http://localhost
 ```
 
 `docker-compose.yml` runs the app plus the **phlo-whatsapp** bridge
