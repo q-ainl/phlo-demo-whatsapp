@@ -52,8 +52,8 @@ route both POST receive {
 	$given = (string)($_SERVER['HTTP_SECRET'] ?? '')
 	if ($this->secret === '' || !hash_equals($this->secret, $given)) return output(['error' => 'unauthorized'], code: 401)
 	$data = json_decode((string)file_get_contents('php://input'), true)
-	if (!is_array($data)) $data = ['from' => (string)%req->from, 'type' => (string)%req->type, 'body' => (string)%req->body]
-	type_message::create(sender: (string)($data['from'] ?? ''), kind: (string)($data['type'] ?? 'text'), body: (string)($data['body'] ?? ''), ts: time())
+	if (!is_array($data)) $data = ['from' => (string)%req->from, 'type' => (string)%req->type, 'text' => (string)%req->text]
+	type_message::create(sender: (string)($data['from'] ?? ''), kind: (string)($data['type'] ?? 'text'), body: (string)($data['text'] ?? ''), ts: time())
 	return output(['ok' => true])
 }
 
