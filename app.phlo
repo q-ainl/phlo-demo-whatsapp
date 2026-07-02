@@ -98,13 +98,13 @@ view:
 
 view status:
 <section.card.status>
-<if $this->configured>
-	<p.ok>✅ Configured. Gateway at <code>$this->endpoint</code>.</p>
-	<form.async method=post action="/check"><button>Check engine status</button></form>
-<else>
-	<p.warn>⚠️ Not configured. This demo is inert until you add credentials.</p>
-	<p>Copy <code>data/creds.ini.example</code> to <code>data/creds.ini</code> and fill in your own Phlo WhatsApp gateway URL and secret. Nothing is committed.</p>
-</if>
+	<if $this->configured>
+		<p.ok>✅ Configured. Gateway at <code>$this->endpoint</code>.</p>
+		<form.async method=post action="/check"><button>Check engine status</button></form>
+	<else>
+		<p.warn>⚠️ Not configured. This demo is inert until you add credentials.</p>
+		<p>Copy <code>data/creds.ini.example</code> to <code>data/creds.ini</code> and fill in your own Phlo WhatsApp gateway URL and secret. Nothing is committed.</p>
+	</if>
 </section>
 
 view panels:
@@ -145,13 +145,13 @@ view feed:
 	<h2>Inbox <span.count>{{ count(type_message::records()) }}</span></h2>
 	<if type_message::records()>
 		<ul.messages>
-		<foreach array_slice(type_message::records(), 0, 30) AS $msg>
-			<li>
-				<span.from>$msg->sender</span>
-				<span.kind>$msg->kind</span>
-				<span.body>$msg->body</span>
-			</li>
-		</foreach>
+			<foreach array_slice(type_message::records(), 0, 30) AS $msg>
+				<li>
+					<span.from>$msg->sender</span>
+					<span.kind>$msg->kind</span>
+					<span.body>$msg->body</span>
+				</li>
+			</foreach>
 		</ul>
 	<else>
 		<p.empty>No messages yet. Point your Phlo WhatsApp gateway's webhook at <code>/receive</code> (with the shared secret) and inbound messages appear here.</p>
