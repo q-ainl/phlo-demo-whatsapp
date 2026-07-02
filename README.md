@@ -22,6 +22,8 @@ docker compose up
 # then open http://localhost
 ```
 
+Port taken, or running a second demo next to this one? Pick any port: `PORT=8081 docker compose up` and open http://localhost:8081.
+
 `docker-compose.yml` runs the app plus the **phlo-whatsapp** bridge
 (whatsapp-web.js) as a sidecar. Set a shared `WA_SECRET` on both services, scan the
 QR to link a real account, and sending and receiving work end to end. Without a

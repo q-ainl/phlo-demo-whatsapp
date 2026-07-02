@@ -10,7 +10,7 @@ services:
   app:
     image: ghcr.io/q-ainl/phlo
     ports:
-      - "80:80"
+      - "${PORT:-80}:80"
     environment:
       PHLO__whatsapp__url: "http://whatsapp:3000"
       PHLO__whatsapp__secret: "change-me-to-a-long-random-secret"
