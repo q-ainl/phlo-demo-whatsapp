@@ -1,6 +1,6 @@
 # Phlo WhatsApp demo - in a single app
 
-A standalone app that drives **Phlo WhatsApp** through the engine's `WhatsApp`
+A standalone app that drives [Phlo WhatsApp](https://github.com/q-ainl/phlo-whatsapp) through the engine's `WhatsApp`
 resource. It sends text, images, polls and locations, and receives inbound
 messages on a secret-protected webhook.
 
